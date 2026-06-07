@@ -1,0 +1,10 @@
+# Local AWS credentials — never commit
+config/aws.env
+.aws/
+
+# Local OpenCode config (copy from opencode.json.example)
+opencode.json
+
+# Editor / OS
+.vscode/
+.DS_Store

@@ -1,0 +1,15 @@
+{
+  "name": "OpenCode + AWS Bedrock",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "containerEnv": {
+    "AWS_REGION": "us-east-1"
+  },
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}
