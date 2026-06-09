@@ -32,4 +32,4 @@ USER vscode
 ENV PATH="/home/vscode/.opencode/bin:/home/vscode/.local/bin:/usr/local/bin:${PATH}"
 
 RUN curl -fsSL https://opencode.ai/install | bash
-RUN curl -fsSL https://claude.ai/install.sh | bash
+# RUN curl -fsSL https://claude.ai/install.sh | bash
