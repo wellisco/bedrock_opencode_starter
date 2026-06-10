@@ -1,11 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+export AWS_PAGER=""
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$ROOT/config/aws.env"
 ENV_EXAMPLE="$ROOT/config/aws.env.example"
 OPENCODE_EXAMPLE="$ROOT/opencode.json.example"
 OPENCODE_CONFIG="$ROOT/opencode.json"
+PI_SETTINGS_EXAMPLE="$ROOT/.pi/settings.json.example"
+PI_SETTINGS="$ROOT/.pi/settings.json"
 
 usage() {
   cat <<'EOF'
@@ -78,6 +82,14 @@ case "$auth_choice" in
     echo "Enter your IAM access key (input is hidden for the secret):"
     aws configure
     export AWS_REGION="$aws_region"
+
+    cat >"$ENV_FILE" <<EOF
+AWS_PAGER=
+AWS_PROFILE=default
+AWS_REGION=$aws_region
+EOF
+    chmod 600 "$ENV_FILE"
+    export AWS_PROFILE=default
     ;;
   2)
     read -r -p "Profile name [default]: " profile_name
@@ -115,6 +127,12 @@ if [[ ! -f "$OPENCODE_CONFIG" ]]; then
   echo "Created opencode.json from opencode.json.example"
 fi
 
+if [[ ! -f "$PI_SETTINGS" ]]; then
+  mkdir -p "$ROOT/.pi"
+  cp "$PI_SETTINGS_EXAMPLE" "$PI_SETTINGS"
+  echo "Created .pi/settings.json from .pi/settings.json.example"
+fi
+
 echo
 verify_credentials
 
@@ -124,7 +142,7 @@ Setup complete.
 
 Next steps:
   1. Enable model access in the Bedrock console (Model access / Model catalog).
-  2. Run: ./run.sh
+  2. Run: ./run-opencode.sh  or  ./run-pi.sh  or  ./run-claude.sh
   3. Inside OpenCode, run: /models  and pick a Bedrock model.
 
 EOF

@@ -5,6 +5,9 @@ config/aws.env
 # Local OpenCode config (copy from opencode.json.example)
 opencode.json
 
+# Local Pi config (copy from .pi/settings.json.example)
+.pi/settings.json
+
 # Editor / OS
 .vscode/
 .DS_Store

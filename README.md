@@ -37,7 +37,7 @@ In the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/):
 ### 3. Configure AWS inside the container
 
 ```bash
-chmod +x run.sh run-claude.sh scripts/*.sh
+chmod +x run-opencode.sh run-pi.sh run-claude.sh scripts/*.sh
 ./scripts/setup-aws.sh
 ```
 
@@ -50,12 +50,12 @@ cp opencode.json.example opencode.json
 ./scripts/verify-aws.sh
 ```
 
-### 4. Run OpenCode or Claude Code
+### 4. Run OpenCode, Pi, or Claude Code
 
 **OpenCode:**
 
 ```bash
-./run.sh
+./run-opencode.sh
 ```
 
 Inside OpenCode, select a model:
@@ -63,6 +63,14 @@ Inside OpenCode, select a model:
 ```text
 /models
 ```
+
+**Pi on Bedrock:**
+
+```bash
+./run-pi.sh
+```
+
+Defaults to Claude Sonnet on Bedrock (`amazon-bedrock` / `us.anthropic.claude-sonnet-4-6`). Credentials from `config/aws.env` are loaded automatically. Override with `PI_PROVIDER` and `PI_MODEL` in `config/aws.env`, or pass `--provider` / `--model` on the command line. Switch models with `/model` inside Pi.
 
 **Claude Code on Bedrock:**
 
@@ -73,6 +81,23 @@ Inside OpenCode, select a model:
 This sets `CLAUDE_CODE_USE_BEDROCK=1`, loads credentials from `config/aws.env`, and pins default Sonnet/Opus/Haiku models. Override model IDs in `config/aws.env` if your account uses different inference profiles.
 
 Inside Claude Code, switch models with `/model`. See [Claude Code on Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock).
+
+## Windows users
+
+The dev container is Linux inside Docker — the same on macOS and Windows. On Windows, set up the host first:
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) with **WSL2** backend enabled.
+2. Install the **Dev Containers** extension in VS Code or Cursor.
+3. Clone the repo **inside WSL** (e.g. `\\wsl$\Ubuntu\home\you\projects\...`), not under `C:\`. Bind mounts from `C:\` are much slower.
+
+After **Dev Containers: Reopen in Container**, use the same commands as on Mac. Run `chmod +x` on the shell scripts (step 3 above) — Windows often does not preserve the executable bit on checkout.
+
+**Line endings:** Shell scripts must use LF. This repo’s `.gitattributes` enforces that for `*.sh`. If a script fails with `bad interpreter` or `\r` errors, re-checkout with:
+
+```bash
+git config core.autocrlf input
+git checkout -- .
+```
 
 ## Authentication options
 
@@ -132,13 +157,17 @@ Verify access:
 ```text
 .
 ├── .devcontainer/          # Isolated container — no host credential mounts
+├── .gitattributes          # LF line endings for shell scripts (Windows-safe)
 ├── config/
 │   └── aws.env.example     # Template for local credentials (gitignored when copied)
 ├── scripts/
 │   ├── setup-aws.sh        # Interactive credential setup
 │   └── verify-aws.sh       # Test AWS + Bedrock access
 ├── opencode.json.example   # Bedrock provider defaults
-├── run.sh                  # Start OpenCode with local config
+├── .pi/
+│   └── settings.json.example  # Pi Bedrock + Claude Sonnet defaults
+├── run-opencode.sh         # Start OpenCode with local config
+├── run-pi.sh               # Start Pi with AWS credentials from config/aws.env
 └── run-claude.sh           # Start Claude Code on Bedrock
 ```
 

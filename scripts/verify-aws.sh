@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+export AWS_PAGER=""
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$ROOT/config/aws.env"
 
@@ -33,10 +35,24 @@ fi
 if command -v opencode >/dev/null 2>&1; then
   echo
   echo "OpenCode: $(opencode --version)"
-  echo "Run ./run.sh to start, then use /models inside OpenCode."
+  echo "Run ./run-opencode.sh to start, then use /models inside OpenCode."
 else
   echo
   echo "OpenCode is not installed yet. Rebuild the dev container."
+fi
+
+if [[ ! -f "$ROOT/.pi/settings.json" ]]; then
+  echo
+  echo "Tip: copy .pi/settings.json.example to .pi/settings.json for Pi Bedrock defaults."
+fi
+
+if command -v pi >/dev/null 2>&1; then
+  echo
+  echo "Pi: $(pi --version 2>/dev/null || echo installed)"
+  echo "Run ./run-pi.sh to start Pi on Bedrock (Claude Sonnet by default)."
+else
+  echo
+  echo "Pi is not installed yet. Rebuild the dev container."
 fi
 
 if command -v claude >/dev/null 2>&1; then
